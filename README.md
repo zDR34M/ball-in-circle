@@ -3,7 +3,7 @@
 A fun little web experiment where colorful balls bounce inside a circle.  
 Every time a ball touches the circle’s border, a **new ball** is added!  
 
-![Preview](preview.png) <!-- you can add a screenshot of the site and name it preview.png -->
+![Preview](preview.png) 
 
 ---
 
