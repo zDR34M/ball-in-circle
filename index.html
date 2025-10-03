@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bouncing Balls in Circle</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const circleRadius = Math.min(canvas.width, canvas.height) / 3;
+
+    // Store balls
+    let balls = [];
+
+    class Ball {
+      constructor(x, y, dx, dy, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.radius = radius;
+        this.color = color;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+
+      update() {
+        this.x += this.dx;
+        this.y += this.dy;
+
+        // Distance from center
+        const dist = Math.sqrt(
+          (this.x - centerX) ** 2 + (this.y - centerY) ** 2
+        );
+
+        if (dist + this.radius >= circleRadius) {
+          // Reflect velocity (bounce back)
+          const angle = Math.atan2(this.y - centerY, this.x - centerX);
+          this.dx = -this.dx;
+          this.dy = -this.dy;
+
+          // Add new ball
+          balls.push(
+            new Ball(
+              centerX,
+              centerY,
+              (Math.random() - 0.5) * 6,
+              (Math.random() - 0.5) * 6,
+              8,
+              getRandomColor()
+            )
+          );
+        }
+
+        this.draw();
+      }
+    }
+
+    function getRandomColor() {
+      return `hsl(${Math.random() * 360}, 100%, 50%)`;
+    }
+
+    // First ball
+    balls.push(new Ball(centerX, centerY, 4, 3, 10, getRandomColor()));
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw circle border
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, circleRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Update balls
+      balls.forEach((ball) => ball.update());
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
